@@ -1,6 +1,30 @@
+# Railway configuration for Marzban-node.
+# https://docs.railway.app/deploy/config-as-code
+
 [build]
+# Railway auto-detects the Dockerfile; pin it explicitly for clarity.
 builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-restartPolicyType = "always"
+# Run one container. Railway injects $PORT and proxies external traffic to it.
+# The node listens on 0.0.0.0:$PORT (see config.py + start.sh).
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[env]
+# Protocol / TLS behaviour. Railway terminates TLS at the edge and reaches the
+# node over the private network, so the node serves plain HTTP by default.
+SERVICE_PROTOCOL = "rest"
+SERVICE_TLS = "false"
+SERVICE_HOST = "0.0.0.0"
+XRAY_EXECUTABLE_PATH = "/usr/local/bin/xray"
+XRAY_ASSETS_PATH = "/usr/local/share/xray"
+SSL_DIR = "/var/lib/marzban-node"
+
+# NOTE: The node does NOT require a node name / secret / Marzban URL at runtime
+# — those are configured on the Marzban panel when you add this node. Here you
+# only control the node's listen behaviour and TLS. $PORT is injected by
+# Railway automatically; do not set it manually.
