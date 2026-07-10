@@ -2,12 +2,15 @@
 
 FROM golang:1.23-alpine AS builder
 
-RUN apk add --no-cache git openssl make
+RUN apk add --no-cache git make openssl
 
 WORKDIR /src
 
 RUN git clone --depth 1 https://github.com/gozargah/marzban-node.git .
 
+RUN find . -name go.mod
+
+# اگر go.mod در پوشه اصلی بود:
 RUN go mod download
 
 RUN make build
@@ -24,11 +27,10 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-COPY --from=builder /src/marzban-node /app/marzban-node
+COPY --from=builder /src/ /app/
 
 RUN mkdir -p /app/certs
 
-# ساخت SSL خودامضا
 RUN openssl req -x509 -newkey rsa:2048 -nodes \
     -keyout /app/certs/ssl_key.pem \
     -out /app/certs/ssl_cert.pem \
@@ -39,8 +41,7 @@ ENV SERVICE_PORT=62050
 ENV XRAY_API_PORT=62051
 ENV SSL_CERT_FILE=/app/certs/ssl_cert.pem
 ENV SSL_KEY_FILE=/app/certs/ssl_key.pem
-ENV NODE_HOST=0.0.0.0
 
 EXPOSE 62050
 
-CMD ["/app/marzban-node"]
+CMD ["./marzban-node"]
