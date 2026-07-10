@@ -1,4 +1,4 @@
-# Railway configuration for Marzban-node (Optimized for gRPC & Auto-Healthcheck)
+# Railway configuration for Marzban-node (Optimized for gRPC)
 # https://docs.railway.app/deploy/config-as-code
 
 [build]
@@ -6,14 +6,14 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Path changed to / because gRPC healthcheck handles the root route perfectly
+# Switched to root '/' because gRPC health check responds perfectly here
 healthcheckPath = "/"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
 [env]
-# Switched to gRPC protocol for seamless mTLS and seamless Railway private networking
+# Protocol and TLS setup for secure private networking
 SERVICE_PROTOCOL = "grpc"
 SERVICE_TLS = "true"
 SERVICE_HOST = "0.0.0.0"
