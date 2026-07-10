@@ -18,7 +18,7 @@ restartPolicyMaxRetries = 10
 # Protocol / TLS behaviour. Railway terminates TLS at the edge and reaches the
 # node over the private network, so the node serves plain HTTP by default.
 SERVICE_PROTOCOL = "rest"
-SERVICE_TLS = "false"
+SERVICE_TLS = "true"
 SERVICE_HOST = "0.0.0.0"
 XRAY_EXECUTABLE_PATH = "/usr/local/bin/xray"
 XRAY_ASSETS_PATH = "/usr/local/share/xray"
